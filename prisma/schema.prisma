@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// 1. Enums: Shows you care about Type Safety
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+// User and Post models
+model User {
+  id    String @id @default(uuid())
+  name  String?
+  email String  @unique
+  password String
+  role  String  @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id        String      @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  price       Float
+  stock       Int       @default(0)
+  sku         String      @unique
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  orders      OrderItem[] 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  products  Product[]
+}
+
+model Order {
+  id          String       @id @default(uuid())
+  customer    Customer     @relation(fields: [customerId], references: [id])
+  customerId  String
+
+  status      OrderStatus  @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2)
+
+  items  OrderItem[] 
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([customerId])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 2)
+
+  @@unique([orderId, productId])
+}

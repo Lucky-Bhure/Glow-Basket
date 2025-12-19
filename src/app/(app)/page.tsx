@@ -22,8 +22,8 @@ export default function page() {
             Your one-stop online shopping destination for beauty, lifestyle, and everyday essentials — curated just for you.
           </p>
           <div className="mt-8 flex gap-4">
-            <Button className="rounded-2xl px-6 py-5 text-base">Shop Now</Button>
-            <Button variant="outline" className="rounded-2xl px-6 py-5 text-base">
+            <Button className="rounded-2xl px-6 py-5 text-base border-2 border-[#ece2d3]">Shop Now</Button>
+            <Button className="rounded-2xl px-6 py-5 text-base bg-white border-2 hover:bg-[#ece2d3] hover:border-[#ece2d3]">
               Explore Categories
             </Button>
           </div>
